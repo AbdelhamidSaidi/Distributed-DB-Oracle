@@ -1,0 +1,83 @@
+services:
+
+  site1_db:
+    build:
+      context: ./site1_db
+    container_name: eshop_site1_db
+    environment:
+      ORACLE_PASSWORD: oracle123
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1522:1521"
+      - "5501:5500"
+    volumes:
+      - ./site1_db/init:/container-entrypoint-initdb.d
+      - site1_oradata:/opt/oracle/oradata
+    networks:
+      - eshop_net
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s sys/oracle123@localhost:1521/FREEPDB1 as sysdba | grep -q 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 180s
+
+  site2_db:
+    build:
+      context: ./site2_db
+    container_name: eshop_site2_db
+    environment:
+      ORACLE_PASSWORD: oracle123
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1523:1521"
+      - "5502:5500"
+    volumes:
+      - ./site2_db/init:/container-entrypoint-initdb.d
+      - site2_oradata:/opt/oracle/oradata
+    networks:
+      - eshop_net
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s sys/oracle123@localhost:1521/FREEPDB1 as sysdba | grep -q 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 180s
+
+  global_db:
+    build:
+      context: ./global_db
+      args:
+        SCENARIO: ${SCENARIO:-2}   # override with: SCENARIO=1 docker compose up --build
+    container_name: eshop_global_db
+    depends_on:
+      site1_db:
+        condition: service_healthy
+      site2_db:
+        condition: service_healthy
+    environment:
+      ORACLE_PASSWORD: oracle123
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    volumes:
+      - global_oradata:/opt/oracle/oradata
+      - ./tests:/tests
+    networks:
+      - eshop_net
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s sys/oracle123@localhost:1521/FREEPDB1 as sysdba | grep -q 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 20
+      start_period: 180s
+
+networks:
+  eshop_net:
+    driver: bridge
+
+volumes:
+  global_oradata:
+  site1_oradata:
+  site2_oradata:
