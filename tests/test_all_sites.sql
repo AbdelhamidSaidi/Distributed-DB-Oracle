@@ -202,8 +202,8 @@ BEGIN
     section('5. PROCEDURES — Site2');
 
     DECLARE
-        v_idcommande Commandes2.idcommande%TYPE;
-        v_idproduit  Produits2.idproduit%TYPE;
+        v_idcommande NUMBER;
+        v_idproduit  NUMBER;
     BEGIN
         SELECT MIN(idcommande) INTO v_idcommande FROM Commandes2@site2_link;
         SELECT MIN(idproduit)  INTO v_idproduit  FROM Produits2@site2_link;
