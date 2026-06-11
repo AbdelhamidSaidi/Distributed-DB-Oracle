@@ -75,7 +75,7 @@ sqlplus sys/oracle123@localhost:1522/FREEPDB1 as sysdba
 sqlplus sys/oracle123@localhost:1523/FREEPDB1 as sysdba
 
 # Global
-sqlplus sys/oracle123@localhost:1524/FREEPDB1 as sysdba
+sqlplus sys/oracle123@localhost:1521/FREEPDB1 as sysdba
 ```
 
 ---
