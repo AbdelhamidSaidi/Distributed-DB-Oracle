@@ -59,8 +59,8 @@ services:
       ORACLE_PASSWORD: oracle123
       ORACLE_CHARACTERSET: AL32UTF8
     ports:
-      - "1521:1521"
-      - "5500:5500"
+      - "1524:1521"
+      - "5503:5500"
     volumes:
       - global_oradata:/opt/oracle/oradata
       - ./tests:/tests
